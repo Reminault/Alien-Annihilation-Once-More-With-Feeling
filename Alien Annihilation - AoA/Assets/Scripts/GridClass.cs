@@ -35,6 +35,7 @@ public class GridClass : MonoBehaviour {
 		}
 	}
 
+	//TO convert node positions to world positions 
 	public NodeClass nodeFromWorldPoint(Vector3 worldPosition) {
 		float percentX = (worldPosition.x + gridWorldSize.x/2) / gridWorldSize.x;
 		float percentY = (worldPosition.z + gridWorldSize.y/2) / gridWorldSize.y;
@@ -70,10 +71,24 @@ public class NodeClass
 	public bool walkable ;
 	public Vector3 worldPosition;
 
+	public int gCost ;
+	public int hCost ;
+
+
 	public NodeClass (bool isWalkable , Vector3 worldPos )
 	{
 		walkable = isWalkable ;
 		worldPosition = worldPos ; 
+	}
+
+
+	//to get the cost of movement 
+	public int fCost 
+	{
+		get
+		{
+			return gCost+hCost ;
+		}
 	}
 
 }

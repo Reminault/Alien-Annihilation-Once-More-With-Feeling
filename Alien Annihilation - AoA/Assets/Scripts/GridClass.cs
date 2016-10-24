@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic ; 
 
 public class GridClass : MonoBehaviour {
 
@@ -30,7 +31,8 @@ public class GridClass : MonoBehaviour {
 				Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + nodeRadius) + Vector3.forward * (y * nodeDiameter + nodeRadius);
 				// to check for collisions with cubes 
 				bool walkable = !(Physics.CheckSphere(worldPoint,nodeRadius,unwalkableMask));
-				grid[x,y] = new NodeClass(walkable,worldPoint);
+				// creates new node 
+				grid[x,y] = new NodeClass(walkable,worldPoint ,x,y );
 			}
 		}
 	}
@@ -48,6 +50,30 @@ public class GridClass : MonoBehaviour {
 	}
 
 
+	public List <NodeClass> GetNeighbors (NodeClass node )
+	{
+		List  <NodeClass> neighbors = new List<NodeClass> ();
+		for (int x =-1 ;x<=1 ; x++  )
+		{
+			for (int y =-1 ;y<=1 ; y++  )
+			{
+				if (x == 0 &&y==0)
+				{
+					continue ; 
+				}
+				int checkX = node.gridX;
+				int checkY = node.gridY;
+				if (checkX >=0 && checkX <gridSizeX && checkY >=0&& checkY < gridSizeY)
+				{
+					neighbors.Add(grid [checkX,checkY]);
+				}
+			}
+		}
+		return neighbors ; 
+	}
+	public List <NodeClass> path ; 
+
+
 	// draws 2 gizmos one to dtermine the outer range of the gizmos being drawn within it and anither to fraw thr smaller gizmos within it 
 	void OnDrawGizmos()
 	{
@@ -58,6 +84,14 @@ public class GridClass : MonoBehaviour {
 			foreach (NodeClass n in grid)
 			{
 				Gizmos.color = (n.walkable)?Color.white:Color.red;
+				if (path != null)
+				{
+					if (path.Contains(n))
+					{
+						Gizmos.color = Color.cyan ; 
+					}
+				}
+
 				//the -0.1f is too have space between the cubes 
 				//todo make the spaceing var public 
 				Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-0.1f));
@@ -71,14 +105,22 @@ public class NodeClass
 	public bool walkable ;
 	public Vector3 worldPosition;
 
+	// Used to keep track of each individual node 
+	public int gridX ;
+	public int gridY;
+
+
 	public int gCost ;
 	public int hCost ;
 
+	public NodeClass parent ;
 
-	public NodeClass (bool isWalkable , Vector3 worldPos )
+	public NodeClass (bool isWalkable , Vector3 worldPos , int _gridX ,  int _gridY)
 	{
 		walkable = isWalkable ;
 		worldPosition = worldPos ; 
+		gridX = _gridX;
+		gridY = _gridY;
 	}
 
 

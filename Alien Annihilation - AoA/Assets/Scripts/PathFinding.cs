@@ -1,109 +1,98 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic ; 
+using System.Collections.Generic;
 
-public class PathFinding : MonoBehaviour
-{
+public class Pathfinding : MonoBehaviour {
 
-	public Transform seeker , target ; 
+	public Transform seeker, target;
+	Grid grid;
 
-	GridClass grid ; 
-
-	void Awake ()
+	void Awake()
 	{
-		//target = GameObject.Find ("");    add a tag or name for 
-		grid = GetComponent <GridClass> (); 
+		grid = GetComponent<Grid> ();
 	}
 
-	void Update ()
+	void Update()
 	{
-		FindPath (seeker.position , target.position); 	
+		FindPath (seeker.position, target.position);
 	}
 
-	void FindPath (Vector3 startPos , Vector3 targetPos )
+	void FindPath(Vector3 startPos, Vector3 targetPos)
 	{
-		NodeClass startNode  = grid.nodeFromWorldPoint (startPos);
-		NodeClass targeNode = grid.nodeFromWorldPoint(targetPos) ; 
+		Node startNode = grid.NodeFromWorldPoint(startPos);
+		Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
-		// the set of nodes to be evaluated 
-		List<NodeClass> openSet = new List <NodeClass>();
-		// nodes that have been evaluated 
-		HashSet <NodeClass> closedSet = new HashSet<NodeClass>();
-		openSet.Add (startNode) ; 
+		List<Node> openSet = new List<Node>();
+		HashSet<Node> closedSet = new HashSet<Node>();
+		openSet.Add(startNode);
 
-		while (openSet.Count >0)
-		{
-			NodeClass currentNode = openSet[0];
-
-			//to loop through all the nodes in the openSet
-			for (int i = 1 ; i <openSet.Count ; i++)
+		while (openSet.Count > 0) {
+			Node node = openSet[0];
+			for (int i = 1; i < openSet.Count; i ++)
 			{
-				if (openSet[i].fCost < currentNode.fCost|| openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost )
+				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost)
 				{
-					currentNode= openSet [i];
+					if (openSet[i].hCost < node.hCost)
+						node = openSet[i];
 				}
 			}
-			openSet.Remove(currentNode);
-			closedSet.Add (currentNode);
 
-			//break point 
-			if (currentNode == targeNode)
+			openSet.Remove(node);
+			closedSet.Add(node);
+
+			if (node == targetNode)
 			{
-				RetracePath (startNode , targeNode);
-				return ; 
+				RetracePath(startNode,targetNode);
+				return;
 			}
 
-			foreach (NodeClass neighbour in grid.GetNeighbors(currentNode))
-			{
+			foreach (Node neighbour in grid.GetNeighbours(node)) {
 				if (!neighbour.walkable || closedSet.Contains(neighbour))
 				{
-					continue ; 
+					continue;
 				}
-				int newMovemntCostToNeighbour = currentNode.gCost + GetDistance(currentNode , neighbour);
 
-				if (newMovemntCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+				int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
+				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
 				{
-					neighbour.gCost = newMovemntCostToNeighbour;
-					//distance from the node to end node 
-					neighbour.hCost = GetDistance (neighbour , targeNode);
-					neighbour.parent = currentNode ; 
-					if (!openSet.Contains (neighbour))
+					neighbour.gCost = newCostToNeighbour;
+					neighbour.hCost = GetDistance(neighbour, targetNode);
+					neighbour.parent = node;
+
+					if (!openSet.Contains(neighbour))
 					{
-						openSet.Add(neighbour) ; 
+						openSet.Add(neighbour);
 					}
 				}
 			}
 		}
-		Debug.Log ("Path finding successfull "); 
 	}
 
-	void RetracePath (NodeClass startNode ,NodeClass endNode)
+	void RetracePath(Node startNode, Node endNode)
 	{
-		List <NodeClass> path  = new List <NodeClass>();
-		NodeClass currentNode = endNode ; 
+		List<Node> path = new List<Node>();
+		Node currentNode = endNode;
 
 		while (currentNode != startNode)
 		{
 			path.Add(currentNode);
-			currentNode = currentNode.parent ;  
+			currentNode = currentNode.parent;
 		}
-		// the path is calculated in a revered manner thus it must be revesed 
-		path.Reverse (); 
+		path.Reverse();
 
-		grid.path = path ; 
-		Debug.Log ("Retrace Path successfull "); 
+		grid.path = path;
+
 	}
 
-	int GetDistance (NodeClass nodeA , NodeClass nodeB)
+	int GetDistance(Node nodeA, Node nodeB)
 	{
-		int distX = Mathf.Abs (nodeA.gridX- nodeB.gridX);
-		int distY = Mathf.Abs (nodeB.gridY- nodeB.gridY);
+		int dstX = Mathf.Abs(nodeA.gridX - nodeB.gridX);
+		int dstY = Mathf.Abs(nodeA.gridY - nodeB.gridY);
 
-		if(distX> distY)
+		if (dstX >= dstY)
 		{
-			return 14*distY + 10*(distX - distY);
+			return 14*dstY + 10* (dstX-dstY);
 		}
-		return 14*distX + 10*(distY - distX);
-
+		return 14*dstX + 10 * (dstY-dstX);
 	}
 }

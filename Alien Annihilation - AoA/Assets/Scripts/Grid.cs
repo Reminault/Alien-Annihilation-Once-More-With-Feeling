@@ -62,7 +62,7 @@ public class Grid : MonoBehaviour {
 		return neighbours;
 	}
 	
-
+	// method to convert each nodes pos (each square gizmo) to world points 
 	public Node NodeFromWorldPoint(Vector3 worldPosition)
 	{
 		float percentX = (worldPosition.x + gridWorldSize.x/2) / gridWorldSize.x;

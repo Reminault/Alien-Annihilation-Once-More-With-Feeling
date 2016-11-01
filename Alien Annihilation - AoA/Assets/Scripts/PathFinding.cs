@@ -25,7 +25,9 @@ public class Pathfinding : MonoBehaviour {
 		List<Node> openSet = new List<Node>();
 		HashSet<Node> closedSet = new HashSet<Node>();
 		openSet.Add(startNode);
+		//slow down start
 
+		//implemnt a binary tree type heap class ?? ask ahmed for explaination 
 		while (openSet.Count > 0) {
 			Node node = openSet[0];
 			for (int i = 1; i < openSet.Count; i ++)
@@ -36,7 +38,7 @@ public class Pathfinding : MonoBehaviour {
 						node = openSet[i];
 				}
 			}
-
+			//slowdonwn end 
 			openSet.Remove(node);
 			closedSet.Add(node);
 

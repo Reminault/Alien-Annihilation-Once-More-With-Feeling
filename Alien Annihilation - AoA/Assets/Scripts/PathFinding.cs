@@ -14,56 +14,57 @@ public class Pathfinding : MonoBehaviour {
 
 	void Update()
 	{
+		if (Input.GetKey(KeyCode.Space))
+		{
 		FindPath (seeker.position, target.position);
+		}
 	}
 
 	void FindPath(Vector3 startPos, Vector3 targetPos)
 	{
+		Debug.Log ("Starting FINDPATH"); 
 		Node startNode = grid.NodeFromWorldPoint(startPos);
 		Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
-		List<Node> openSet = new List<Node>();
+		Heap<Node> openSet = new Heap<Node>(grid.MaxSize);
 		HashSet<Node> closedSet = new HashSet<Node>();
 		openSet.Add(startNode);
-		//slow down start
 
-		//implemnt a binary tree type heap class ?? ask ahmed for explaination 
-		while (openSet.Count > 0) {
-			Node node = openSet[0];
-			for (int i = 1; i < openSet.Count; i ++)
-			{
-				if (openSet[i].fCost < node.fCost || openSet[i].fCost == node.fCost)
-				{
-					if (openSet[i].hCost < node.hCost)
-						node = openSet[i];
-				}
-			}
-			//slowdonwn end 
-			openSet.Remove(node);
-			closedSet.Add(node);
 
-			if (node == targetNode)
+		while (openSet.Count > 0)
+		{
+			Node currentNode = openSet.RemoveFirst();
+			closedSet.Add(currentNode);
+
+			if (currentNode == targetNode)
 			{
 				RetracePath(startNode,targetNode);
 				return;
 			}
 
-			foreach (Node neighbour in grid.GetNeighbours(node)) {
-				if (!neighbour.walkable || closedSet.Contains(neighbour))
+			foreach (Node neighbour in grid.GetNeighbours(currentNode))
+			{
+				if (!neighbour.isWalkable || closedSet.Contains(neighbour))
 				{
 					continue;
 				}
 
-				int newCostToNeighbour = node.gCost + GetDistance(node, neighbour);
+				int newCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
 				if (newCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
 				{
 					neighbour.gCost = newCostToNeighbour;
 					neighbour.hCost = GetDistance(neighbour, targetNode);
-					neighbour.parent = node;
+					neighbour.parent = currentNode;
 
 					if (!openSet.Contains(neighbour))
 					{
 						openSet.Add(neighbour);
+						Debug.Log ("Updateing openset with new neighbor "); 
+					}
+					else 
+					{
+						openSet.UpdateItem(neighbour);
+						Debug.Log ("Updateing openset"); 
 					}
 				}
 			}

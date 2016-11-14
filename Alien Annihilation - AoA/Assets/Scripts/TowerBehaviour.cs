@@ -2,12 +2,18 @@
 using System.Collections;
 public class TowerBehaviour : MonoBehaviour 
 {		
-	public GameObject cannonprefab ; 
-	public float radius = 5.0f;
+	public GameObject projectile ; 
+	public float radius = 20.0f;
 	public LayerMask layermask ; 
-	public float fireRate = 0.5F;
+	public float fireRate = 1.5F;
 	private float nextFire = 0.0F;
-	
+	public float damage = 5f;
+	public GameObject currentTarget; 
+	public Transform rotatingPart;
+	public float enemyDistance;
+	public float lookRadius = 30.0f; 
+
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -16,39 +22,72 @@ public class TowerBehaviour : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Vector3 forward = transform.TransformDirection (Vector3.forward); 
-		RaycastHit hit; 
+		//enemyDistance = Vector3.Distance (transform.position, currentTarget.transform.position); 
+		Vector3 lookPosition = gameObject.transform.position; 
+		Collider[] lookFor = Physics.OverlapSphere (lookPosition, lookRadius, layermask);
 
-		Physics.Raycast (transform.position, forward, out hit, 10f);
-		if (hit.collider.tag == "Enemy")
+		if (lookFor.Length > 0) 
 		{
-			onAttack () ; 
-		}
+			if (lookFor [0].tag == "Enemy") {
 
-		//onAttack () ; 
+				currentTarget = lookFor[0].transform.gameObject;
+				enemyDistance = Vector3.Distance (transform.position, currentTarget.transform.position); 
+
+				Vector3 position = gameObject.transform.position; 
+
+				Vector3 Direction = currentTarget.transform.position - transform.position;
+
+				Quaternion lookAt = Quaternion.LookRotation (Direction);
+				Vector3 Rotation = lookAt.eulerAngles;
+				rotatingPart.rotation = Quaternion.Euler (-90, Rotation.y, 0);
+			}
+		}
+		/*if (enemyDistance <= 30f) {
+
+			Vector3 position = gameObject.transform.position; 
+
+			Vector3 Direction = currentTarget.transform.position - transform.position;
+
+			Quaternion lookAt = Quaternion.LookRotation (Direction);
+			Vector3 Rotation = lookAt.eulerAngles;
+			rotatingPart.rotation = Quaternion.Euler (-90, Rotation.y, 0);
+		
+		}*/
+			onAttack (); 
+		
 	}
 	void onAttack ()
 	{
-		/*Vector3 position = gameObject.transform.position ; 
+ 
+		Vector3 position = gameObject.transform.position ; 
 		Collider []  something = Physics.OverlapSphere(position ,radius ,layermask ); 
+
 		
-		if (something.Length > 0 && Time.time > nextFire)
-		{
-			if(something[0].tag == "Enemy")
-		{
+		if (something.Length > 0 && Time.time > nextFire) {
+			if (something [0].tag == "Enemy") {
 
-
+				currentTarget = something [0].transform.gameObject;
+				Debug.Log (something [0].transform);
 				nextFire = Time.time + fireRate;
-				Vector3   Direction  = //something[0].transform.position - transform.position ;
+				Vector3 Direction = something[0].transform.position - transform.position;
 
-				GameObject cannon = Instantiate (cannonprefab , transform.position , Quaternion.identity) as GameObject ;
-				cannon.GetComponent<Rigidbody>().AddForce(Direction.normalized*5.0f, ForceMode.Impulse);
-				
+		
 
-		}*/
+				GameObject cannon = Instantiate (projectile, transform.position, Quaternion.identity) as GameObject;
+				cannon.GetComponent<Rigidbody> ().AddForce (Direction.normalized * 100.0f, ForceMode.Impulse);
 
-
-
+			}
+		}
 	}
+
+	/*void OnDrawGizmos ()
+	{
+		Gizmos.color = Color.cyan;
+		Gizmos.DrawWireSphere (transform.position, radius);
+		Gizmos.DrawWireSphere (transform.position, lookRadius);
+	}*/
+
+
+
 	
 }

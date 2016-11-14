@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class Grid : MonoBehaviour
 {
-	public bool onlydisplayPathGizmos;
+	public bool displayGridGixzmos;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
 	// flaot varibalbe to control size of eahc physical node , more nodes will mean less performence 
@@ -21,6 +21,7 @@ public class Grid : MonoBehaviour
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y/nodeDiameter);
 		CreateGrid();
 	}
+	//USed to set maximum size of array in heap class 
 	public int MaxSize
 	{
 		get
@@ -28,6 +29,7 @@ public class Grid : MonoBehaviour
 		return gridSizeX * gridSizeY ; 
 		}
 	}
+	//cretaes invisible grid for the pathfinding to work
 	void CreateGrid()
 	{
 		grid = new Node[gridSizeX,gridSizeY];
@@ -43,7 +45,7 @@ public class Grid : MonoBehaviour
 			}
 		}
 	}
-
+	//adds each Node to grid 
 	public List<Node> GetNeighbours(Node node)
 	{
 		List<Node> neighbours = new List<Node>();
@@ -83,40 +85,21 @@ public class Grid : MonoBehaviour
 		return grid[x,y];
 	}
 
-	public List<Node> path;
+	//public List<Node> path;
 	//to draw gizmos 
 	void OnDrawGizmos()
 	{
 		Gizmos.DrawWireCube(transform.position,new Vector3(gridWorldSize.x,1,gridWorldSize.y));
 
-		if (onlydisplayPathGizmos)
-		{
-			if (path!=null)
+		if (grid!=null && displayGridGixzmos)
 			{
-				foreach(Node n in path)
-				{
-					Gizmos.color = Color.cyan;
-					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-.1f));
-				}
-			}
-		}
-		else 
-		{
-			if (grid != null) {
-				foreach (Node n in grid)
+				foreach(Node n in grid)
 				{
 					Gizmos.color = (n.isWalkable)?Color.white:Color.red;
-					if (path != null)
-					{
-						if (path.Contains(n))
-						{
-							Gizmos.color = Color.cyan;
-						}
-					}
+					//Gizmos.color = Color.cyan;
 					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter-.1f));
 				}
 			}
-		}
 		
 	}
 }

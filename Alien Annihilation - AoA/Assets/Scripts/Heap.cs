@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System ;
+// the heap class here is based on the article in the website below and is a heavily upgraded implmetaiton of it 
+//http://www.policyalmanac.org/games/binaryHeaps.htm
+
 //todo Implment  a sortup   fucntion to find :
 //Parent = (n-1)/2
 //Child ledt 2n+1
@@ -120,7 +123,8 @@ public class Heap<T>  where T :IHeapItem<T> {
 }
 
 public interface IHeapItem<T> : IComparable<T> {
-	int HeapIndex {
+	 int HeapIndex
+	{
 		get;
 		set;
 	}

@@ -3,7 +3,10 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - SpawnLocation
+  - Enemy
+  - Turret
   layers:
   - Default
   - TransparentFX
@@ -15,7 +18,7 @@ TagManager:
   - 
   - UnWalkable
   - Obstacle
-  - 
+  - Enemy
   - 
   - 
   - 

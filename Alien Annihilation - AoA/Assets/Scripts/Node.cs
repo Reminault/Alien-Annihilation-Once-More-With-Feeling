@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Node : IHeapItem<Node> {
-	
+public class Node : IHeapItem<Node>
+{
+	// to check if node is walkable or not 
 	public bool isWalkable;
 	public Vector3 worldPosition;
 	public int gridX;

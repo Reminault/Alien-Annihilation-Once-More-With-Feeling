@@ -3,13 +3,26 @@ using System.Collections;
 
 public class enemyAnmationController : MonoBehaviour {
 
+	Animator anim ; 
+
 	// Use this for initialization
-	void Start () {
-	
-	}
+	void Start () 
+	{
+		anim = GetComponent <Animator> (); 
+ 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 	
+	}
+
+	void onAttack ()
+	{
+		//anim.SetInteger ("");
+	}
+	void onWalk ()
+	{
+
 	}
 }
